@@ -15,7 +15,7 @@ export default function MailClient() {
   function handleToggle(toggledId) {
     // TODO: allow multiple selection
     //console.log(newPerson);
-    const newPerson = {...selectedId, selected: selectedId.selected.push([toggledId]), selectedCount: selectedId.selectedCount + 1 }
+    const newPerson = {...selectedId, selected: toggledId, selectedCount: selectedId.selectedCount + 1 }
     setSelectedId(newPerson);
     console.log(newPerson);
   }
