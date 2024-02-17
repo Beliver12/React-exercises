@@ -15,9 +15,16 @@ export default function MailClient() {
   function handleToggle(toggledId) {
     // TODO: allow multiple selection
     //console.log(newPerson);
-    const newPerson = {...selectedId, selected: toggledId, selectedCount: selectedId.selectedCount + 1 }
-    setSelectedId(newPerson);
-    console.log(newPerson);
+    
+    if(selectedId.selected.includes(toggledId)){
+     const newPerson = {...selectedId, selected: selectedId.selected.filter(id => id !== toggledId), selectedCount: selectedId.selectedCount - 1 }
+      setSelectedId(newPerson);
+    }
+   else if(!selectedId.selected.includes(toggledId)){
+     const newPerson = {...selectedId, selected: selectedId.selected.concat(toggledId), selectedCount: selectedId.selectedCount + 1 }
+     setSelectedId(newPerson);
+     }
+    //console.log(newPerson);
   }
 
   return (
@@ -30,7 +37,7 @@ export default function MailClient() {
             letter={letter}
             isSelected={
               // TODO: allow multiple selection
-              letter.id === selectedId.selected
+              letter.id === selectedId.selected[letter.id]
             }
             onToggle={handleToggle}
           />
