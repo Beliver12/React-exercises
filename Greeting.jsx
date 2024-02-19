@@ -2,29 +2,51 @@
 import { getImageUrl } from './utils.js';
 
 import { useState } from 'react';
+export default function SyncedInputs() {
+  const [text, setText] = useState('');
+
+  return (
+    <>
+      <Input label="First input" handleChange={(e) => setText(e.target.value)} value={text}/>
+      <Input label="Second input" handleChange={(e) => setText(e.target.value)} value={text}/>
+    </>
+  );
+}
+
+function Input({ label, handleChange, value}) {
+  
+
+ 
+
+  return (
+    <label>
+      {label}
+      {' '}
+      <input
+        value={value}
+        onChange={handleChange}
+      />
+      
+    </label>
+  );
+}
 
 
-export default function MailClient() {
-  const [selectedId, setSelectedId] = useState({
-    selected: [],
-    selectedCount: 0,
-  });
+/*export default function MailClient() {
+  const [selectedIds, setSelectedId] = useState([]);
 
-  // TODO: allow multiple selection
-
+  const selectedCount =  selectedIds.length
   function handleToggle(toggledId) {
-    // TODO: allow multiple selection
-    //console.log(newPerson);
+
     
-    if(selectedId.selected.includes(toggledId)){
-     const newPerson = {...selectedId, selected: selectedId.selected.filter(id => id !== toggledId), selectedCount: selectedId.selectedCount - 1 }
-      setSelectedId(newPerson);
+    if(selectedIds.includes(toggledId)){
+     const newSelectedId = selectedIds.filter(id => id !== toggledId)
+      setSelectedId(newSelectedId);
     }
-   else if(!selectedId.selected.includes(toggledId)){
-     const newPerson = {...selectedId, selected: selectedId.selected.concat(toggledId), selectedCount: selectedId.selectedCount + 1 }
-     setSelectedId(newPerson);
+   else if(!selectedIds.includes(toggledId)){
+    const newSelectedId =  selectedIds.concat(toggledId)
+     setSelectedId(newSelectedId);
      }
-    //console.log(newPerson);
   }
 
   return (
@@ -37,14 +59,14 @@ export default function MailClient() {
             letter={letter}
             isSelected={
               // TODO: allow multiple selection
-              letter.id === selectedId.selected[letter.id]
+             selectedIds.includes(letter.id)
             }
             onToggle={handleToggle}
           />
         ))}
         <hr />
         <p>
-          <b>You selected {selectedId.selectedCount} letters</b>
+          <b>You selected {selectedCount} letters</b>
         </p>
       </ul>
     </>
@@ -88,4 +110,4 @@ const letters= [{
   id: 2,
   subject: 'Festival Begins in Just SEVEN Days!',
   isStarred: false,
-}];
+}];*/
