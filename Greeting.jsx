@@ -2,9 +2,58 @@
 import { getImageUrl } from './utils.js';
 
 import { useState } from 'react';
+export default function Person() {
+  const [person, setPerson] = useState({ name: 'John', age: 100 });
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const fullName = firstName + ' ' + lastName;
+  console.log(fullName)
 
+  const handleIncreaseAge = () =>{
+    console.log("in handleIncreaseAge (before setPerson call): ", person)
+    setPerson({ ...person, age: person.age + 1 });
+    // we've called setPerson, surely person has updated?
+    console.log("in handleIncreaseAge (after setPerson call): ", person);
+  };
 
-export default function FilterableList() {
+  // this console.log runs every time the component renders
+  // what do you think this will print?
+  console.log("during render: ", person);
+
+  return (
+    <>
+      <h1>{person.name}</h1>
+      <h2>{person.age}</h2>
+      <button onClick={handleIncreaseAge}>Increase age</button>
+      <Input label="First Name" handleChange={(e) => setFirstName(e.target.value)} value={firstName}/>
+      <Input label="Last Name" handleChange={(e) => setLastName(e.target.value)} value={lastName}/>
+      <Paragraph value={fullName}/>
+    </>
+  );
+}
+function Input({ label, handleChange, value}) {
+  
+
+  return (
+    <label>
+      {label}
+      {''}
+      <input
+        value={value}
+        onChange={handleChange}
+      />
+    </label>
+  );
+}
+
+function Paragraph({value}) {
+  return(
+    <div>
+      <p value={value}>{value}</p>
+    </div>
+  )
+}
+/*export default function FilterableList() {
   const [query, setQuery] = useState('');
 
  
@@ -84,7 +133,7 @@ export const foods = [{
   description: 'Dim sum is a large range of small dishes that Cantonese people traditionally enjoy in restaurants for breakfast and lunch'
 }];
 
-
+*/
 
 
 
