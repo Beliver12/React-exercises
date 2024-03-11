@@ -1,8 +1,287 @@
 //import { people } from './data.js';
-import { getImageUrl } from './utils.js';
+import React, { Component } from 'react';
 
-import { useState } from 'react';
-export default function Person() {
+class ClassInput extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      todos: ['Just some demo tasks', 'As an example'],
+      inputVal: '',
+      key: '',
+    };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+  }
+
+  handleDelete(e) {
+    const index = Number(e.target.value)
+    this.setState((state) => ({
+      
+      todos: state.todos.splice(index, 1)
+    }));
+  }
+
+  handleInputChange(e) {
+    this.setState((state) => ({
+      ...state,
+      inputVal: e.target.value,
+    }));
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    this.setState((state) => ({
+      todos: state.todos.concat(state.inputVal),
+      inputVal: '',
+    }));
+  }
+
+  render() {
+    return (
+      <section>
+        {/* eslint-disable-next-line react/prop-types */}
+        <h3>{this.props.name}</h3>
+        {/* The input field to enter To-Do's */}
+        <form onSubmit={this.handleSubmit}>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+          <label htmlFor="task-entry">Enter a task: </label>
+          <input
+            type="text"
+            name="task-entry"
+            value={this.state.inputVal}
+            onChange={this.handleInputChange}
+          />
+          <button type="submit">Submit</button>
+         
+        </form>
+        <h4>All the tasks!</h4>
+        {/* The list of all the To-Do's, displayed */}
+        <ul>
+          {this.state.todos.map((todo,index) => (
+            <li  key={index}>{todo}
+            <button value={index} onClick={this.handleDelete} type="delete">Delete</button>
+            </li>  
+          ))}
+        </ul>
+      </section>
+    );
+  }
+}
+
+export default ClassInput;
+
+
+
+/*const FunctionalInput = ({ name }) => {
+  const [todos, setTodos] = useState(["Just some demo tasks", "As an example"]);
+  const [inputVal, setInputVal] = useState("");
+
+  const handleInputChange = (e) => {
+    setInputVal(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setTodos((todo) => [...todo, inputVal]);
+    setInputVal("");
+  };
+
+  return (
+    <section>
+      <h3>{name}</h3>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="task-entry">Enter a task: </label>
+        <input
+          type="text"
+          name="task-entry"
+          value={inputVal}
+          onChange={handleInputChange}
+        />
+        <button type="submit">Submit</button>
+      </form>
+      <h4>All the tasks!</h4>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo}>{todo}</li>
+        ))}
+      </ul>
+    </section>
+  );
+};
+
+export default FunctionalInput;
+
+
+/*export default function Page() {
+  const [planetList, setPlanetList] = useState([])
+  const [planetId, setPlanetId] = useState('');
+
+  const [placeList, setPlaceList] = useState([]);
+  const [placeId, setPlaceId] = useState('');
+
+  useEffect(() => {
+    let ignore = false;
+    fetchData('/planets').then(result => {
+      if (!ignore) {
+        console.log('Fetched a list of planets.');
+        setPlanetList(result);
+        setPlanetId(result[0].id); // Select the first planet
+       
+        
+      }
+    });
+    return () => {
+      ignore = true;
+    }
+  });
+  
+
+  useEffect(() => {
+    if(planetId === ''){
+      return
+    }
+    let ignore = false;
+    fetchData('/planets/' + planetId + '/places').then(result => {
+      if (!ignore) {
+        console.log('Fetched a list of places.');
+        setPlaceList(result);
+        setPlaceId(result[0].id); // Select the first planet
+       
+        
+      }
+    });
+    return () => {
+      ignore = true;
+    }
+  }, [planetId]);
+
+
+  return (
+    <>
+      <label>
+        Pick a planet:{' '}
+        <select value={planetId} onChange={e => {
+          setPlanetId(e.target.value);
+        }}>
+          {planetList.map(planet =>
+            <option key={planet.id} value={planet.id}>{planet.name}</option>
+          )}
+        </select>
+      </label>
+      <label>
+        Pick a place:{' '}
+        <select value={placeId} onChange={e => {
+          setPlaceId(e.target.value);
+        }}>
+          {placeList.map(place =>
+            <option key={place.id} value={place.id}>{place.name}</option>
+          )}
+        </select>
+      </label>
+      <hr />
+      <p>You are going to: {placeId || '???'} on {planetId || '???'} </p>
+    </>
+  );
+}
+
+function fetchData(url) {
+  if (url === '/planets') {
+    return fetchPlanets();
+  } else if (url.startsWith('/planets/')) {
+    const match = url.match(/^\/planets\/([\w-]+)\/places(\/)?$/);
+    if (!match || !match[1] || !match[1].length) {
+      throw Error('Expected URL like "/planets/earth/places". Received: "' + url + '".');
+    }
+    return fetchPlaces(match[1]);
+  } else throw Error('Expected URL like "/planets" or "/planets/earth/places". Received: "' + url + '".');
+}
+
+async function fetchPlanets() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve([{
+        id: 'earth',
+        name: 'Earth'
+      }, {
+        id: 'venus',
+        name: 'Venus'
+      }, {
+        id: 'mars',
+        name: 'Mars'        
+      }]);
+    }, 1000);
+  });
+}
+
+async function fetchPlaces(planetId) {
+  if (typeof planetId !== 'string') {
+    throw Error(
+      'fetchPlaces(planetId) expects a string argument. ' +
+      'Instead received: ' + planetId + '.'
+    );
+  }
+  return new Promise(resolve => {
+    setTimeout(() => {
+      if (planetId === 'earth') {
+        resolve([{
+          id: 'laos',
+          name: 'Laos'
+        }, {
+          id: 'spain',
+          name: 'Spain'
+        }, {
+          id: 'vietnam',
+          name: 'Vietnam'        
+        }]);
+      } else if (planetId === 'venus') {
+        resolve([{
+          id: 'aurelia',
+          name: 'Aurelia'
+        }, {
+          id: 'diana-chasma',
+          name: 'Diana Chasma'
+        }, {
+          id: 'kumsong-vallis',
+          name: 'Kŭmsŏng Vallis'        
+        }]);
+      } else if (planetId === 'mars') {
+        resolve([{
+          id: 'aluminum-city',
+          name: 'Aluminum City'
+        }, {
+          id: 'new-new-york',
+          name: 'New New York'
+        }, {
+          id: 'vishniac',
+          name: 'Vishniac'
+        }]);
+      } else throw Error('Unknown planet ID: ' + planetId);
+    }, 1000);
+  });
+}
+
+
+/*export default function Clock() {
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+   const key = setInterval(() => {
+      setCounter(count => count + 1)
+    }, 1000);
+
+    return () => {
+      clearInterval(key)
+    }
+  }, [])
+
+  return (
+    <p>{counter} seconds have passed.</p>
+  );
+}
+/*export default function Person() {
   const [person, setPerson] = useState({ name: 'John', age: 100 });
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -27,7 +306,8 @@ export default function Person() {
       <button onClick={handleIncreaseAge}>Increase age</button>
       <Input label="First Name" handleChange={(e) => setFirstName(e.target.value)} value={firstName}/>
       <Input label="Last Name" handleChange={(e) => setLastName(e.target.value)} value={lastName}/>
-      <Paragraph value={fullName}/>
+
+      <p>{fullName}</p>
     </>
   );
 }
@@ -46,13 +326,7 @@ function Input({ label, handleChange, value}) {
   );
 }
 
-function Paragraph({value}) {
-  return(
-    <div>
-      <p value={value}>{value}</p>
-    </div>
-  )
-}
+
 /*export default function FilterableList() {
   const [query, setQuery] = useState('');
 
