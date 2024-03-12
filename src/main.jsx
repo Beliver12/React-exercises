@@ -2,12 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-import Person from '../Greeting.jsx'
+import ClassInput from '../Greeting.jsx'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
-    <Person/>
+    <div>
+      <App />
+      <ClassInput/>
+    </div>
   </React.StrictMode>,
 )

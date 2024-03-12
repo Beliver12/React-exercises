@@ -1,6 +1,6 @@
 //import { people } from './data.js';
 import React, { Component } from 'react';
-
+import Count from './Count';
 class ClassInput extends Component {
   constructor(props) {
     super(props);
@@ -8,19 +8,33 @@ class ClassInput extends Component {
     this.state = {
       todos: ['Just some demo tasks', 'As an example'],
       inputVal: '',
-      key: '',
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleResubmit = this.handleResubmit.bind(this);
   }
 
+  handleEdit(e) {
+    const index = Number(e.target.id);
+    const oldEl = document.getElementById(e.target.id);
+    const newElInput = document.createElement('input')
+    
+    oldEl.appendChild(newElInput)
+   oldEl.childNodes[0].data = '';
+   oldEl.childNodes[2].textContent= "Resubmit";
+    newElInput.setAttribute('id', index)
+    newElInput.value = this.state.todos[index];
+    oldEl.childNodes[2].addEventListener('click', this.handleResubmit)
+  }
+
+
   handleDelete(e) {
-    const index = Number(e.target.value)
+    const index = Number(e.target.id)
     this.setState((state) => ({
-      
-      todos: state.todos.splice(index, 1)
+      todos: state.todos.filter((todo, i) => i !== index),
     }));
   }
 
@@ -39,6 +53,26 @@ class ClassInput extends Component {
     }));
   }
 
+  handleResubmit(e) {
+    e.preventDefault();
+    const index = Number(e.target.id);
+    const oldEl = document.getElementById(e.target.id);
+
+  
+    const newTodos = this.state.todos.map((t, i)  => {
+      if(i === index) {
+        return t = oldEl.childNodes[3].value;
+      } else {
+        return t;
+      }
+    })
+    this.setState((state) => ({
+      todos:  state.todos = newTodos,
+      inputVal: '',
+    }));
+  
+  }
+
   render() {
     return (
       <section>
@@ -54,18 +88,22 @@ class ClassInput extends Component {
             value={this.state.inputVal}
             onChange={this.handleInputChange}
           />
-          <button type="submit">Submit</button>
+          <button onSubmit={this.handleCount} type="submit">Submit</button>
          
         </form>
         <h4>All the tasks!</h4>
         {/* The list of all the To-Do's, displayed */}
-        <ul>
-          {this.state.todos.map((todo,index) => (
-            <li  key={index}>{todo}
-            <button value={index} onClick={this.handleDelete} type="delete">Delete</button>
-            </li>  
-          ))}
-        </ul>
+       
+          <ul>
+            {this.state.todos.map((todo,index) => (
+              <li id={index}  key={todo}>{todo}
+              <button id={index} onClick={this.handleDelete} type="delete">Delete</button>
+              <button id={index} onClick={this.handleEdit} type="edit">Edit</button>
+              </li>
+            ))}
+          </ul>
+          <Count value={this.state.todos.length}>{this.state.todos.length}</Count>
+
       </section>
     );
   }
