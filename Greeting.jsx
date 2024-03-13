@@ -1,12 +1,16 @@
 //import { people } from './data.js';
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import Count from './Count';
 
-function Todo({ isEdited , value}) {
+function Todo({ isEdited , value, id}) {
+  const [message, setMessage] = useState(value);
+  const handleChange = event => {
+    setMessage(event.target.value);
+  };
   if(isEdited) {
     return <li className="item">{value}</li>;
   }
-  return <input type='text' value={value}/>
+  return <input id={id} type='text'  value={message} onChange={handleChange}/>
 }
 
 function EditButton({isEdit, handleEdit, handleResubmit, id}) {
@@ -63,7 +67,7 @@ class ClassInput extends Component {
   handleDelete(e) {
     const index = Number(e.target.id)
     this.setState((state) => ({
-      todos: state.todo.filter((todo, i) => i !== index),
+      todo: state.todo.filter((todo, i) => i !== index),
     }));
   }
 
@@ -92,11 +96,30 @@ class ClassInput extends Component {
   
     const newTodos = this.state.todo.map((t, i)  => {
       if(i === index) {
-        return t = oldEl.childNodes[3].value;
+        return t = oldEl.value;
       } else {
         return t;
       }
     })
+    const newEdited = this.state.isEdited.map((e, i)  => {
+      if(i === index) {
+        return e = true;
+      } else {
+        return e;
+      }
+    })
+    const newButtonType = this.state.isEdit.map((b, i)  => {
+      if(i === index) {
+        return b = true;
+      } else {
+        return b;
+      }
+    })
+  
+    this.setState((state) => ({
+      isEdited: state.isEdited = newEdited,
+      isEdit: state.isEdit = newButtonType,
+    }));
     this.setState((state) => ({
       todo:  state.todo = newTodos,
       inputVal: '',
@@ -128,7 +151,7 @@ class ClassInput extends Component {
           <ul>
             {this.state.todo.map((todo,index) => (
               <div key={index}>
-                <Todo id={index}  key={todo} name={todo} onChange={this.handleInputChange } value={todo} isEdited={this.state.isEdited[index]}/>
+                <Todo id={index}  key={todo} name={todo}  value={todo} isEdited={this.state.isEdited[index]}/>
                 <button id={index} onClick={this.handleDelete} type="delete">Delete</button>
                 <EditButton id={index} handleEdit={this.handleEdit} handleResubmit={this.handleResubmit} isEdit={this.state.isEdit[index]} />
               </div>
