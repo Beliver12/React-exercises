@@ -1,12 +1,21 @@
 //import { people } from './data.js';
 import React, { Component } from 'react';
 import Count from './Count';
-function Todo({ isEdited , name}) {
+
+function Todo({ isEdited , value}) {
   if(isEdited) {
-    return <li className="item">{name}</li>;
+    return <li className="item">{value}</li>;
   }
-  return <input type='text' value={name}/>
+  return <input type='text' value={value}/>
 }
+
+function EditButton({isEdit, handleEdit, handleResubmit, id}) {
+  if(isEdit) {
+    return <button id={id} onClick={handleEdit}>Edit</button>
+  }
+  return <button id={id} onClick={handleResubmit}>Resubmit</button>
+}
+
 class ClassInput extends Component {
   constructor(props) {
     super(props);
@@ -15,8 +24,7 @@ class ClassInput extends Component {
  
        todo: ['Just some demo tasks', 'As an example'],
        isEdited: [true, true],
-       buttonType: ['Edit', 'Edit'],
-       clickHandler: [this.handleEdit, this.handleEdit],
+       isEdit: [true, true],
       inputVal: '',
     };
 
@@ -36,24 +44,17 @@ class ClassInput extends Component {
         return e;
       }
     })
-    const newButtonType = this.state.buttonType.map((b, i)  => {
+    const newButtonType = this.state.isEdit.map((b, i)  => {
       if(i === index) {
-        return b = 'Resubmit';
+        return b = false;
       } else {
         return b;
       }
     })
-    const newButtonClickHandler = this.state.clickHandler.map((c, i)  => {
-      if(i === index) {
-        return c = this.handleResubmit;
-      } else {
-        return c;
-      }
-    })
+  
     this.setState((state) => ({
       isEdited: state.isEdited = newEdited,
-      buttonType: state.buttonType = newButtonType,
-      clickHandler: state.clickHandler = newButtonClickHandler,
+      isEdit: state.isEdit = newButtonType,
     }));
     
   }
@@ -78,7 +79,7 @@ class ClassInput extends Component {
     this.setState((state) => ({
      todo: state.todo.concat(state.inputVal),
      isEdited: state.isEdited.concat(true),
-     buttonType: state.buttonType.concat('Edit'),
+     isEdit: state.isEdit.concat(true),
       inputVal: '',
     }));
   }
@@ -127,10 +128,9 @@ class ClassInput extends Component {
           <ul>
             {this.state.todo.map((todo,index) => (
               <div key={index}>
-                <Todo id={index}  key={todo} name={todo} value={todo} isEdited={this.state.isEdited[index]}/>
+                <Todo id={index}  key={todo} name={todo} onChange={this.handleInputChange } value={todo} isEdited={this.state.isEdited[index]}/>
                 <button id={index} onClick={this.handleDelete} type="delete">Delete</button>
-                <button id={index} onClick={this.state.clickHandler[index]} type="edit">{this.state.buttonType[index]}</button>
-                
+                <EditButton id={index} handleEdit={this.handleEdit} handleResubmit={this.handleResubmit} isEdit={this.state.isEdit[index]} />
               </div>
             ))}
           </ul>
