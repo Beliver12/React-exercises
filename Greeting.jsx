@@ -1,12 +1,22 @@
 //import { people } from './data.js';
 import React, { Component } from 'react';
 import Count from './Count';
+function Todo({ isEdited , name}) {
+  if(isEdited) {
+    return <li className="item">{name}</li>;
+  }
+  return <input type='text' value={name}/>
+}
 class ClassInput extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      todos: ['Just some demo tasks', 'As an example'],
+ 
+       todo: ['Just some demo tasks', 'As an example'],
+       isEdited: [true, true],
+       buttonType: ['Edit', 'Edit'],
+       clickHandler: [this.handleEdit, this.handleEdit],
       inputVal: '',
     };
 
@@ -19,22 +29,40 @@ class ClassInput extends Component {
 
   handleEdit(e) {
     const index = Number(e.target.id);
-    const oldEl = document.getElementById(e.target.id);
-    const newElInput = document.createElement('input')
+    const newEdited = this.state.isEdited.map((e, i)  => {
+      if(i === index) {
+        return e = false;
+      } else {
+        return e;
+      }
+    })
+    const newButtonType = this.state.buttonType.map((b, i)  => {
+      if(i === index) {
+        return b = 'Resubmit';
+      } else {
+        return b;
+      }
+    })
+    const newButtonClickHandler = this.state.clickHandler.map((c, i)  => {
+      if(i === index) {
+        return c = this.handleResubmit;
+      } else {
+        return c;
+      }
+    })
+    this.setState((state) => ({
+      isEdited: state.isEdited = newEdited,
+      buttonType: state.buttonType = newButtonType,
+      clickHandler: state.clickHandler = newButtonClickHandler,
+    }));
     
-    oldEl.appendChild(newElInput)
-   oldEl.childNodes[0].data = '';
-   oldEl.childNodes[2].textContent= "Resubmit";
-    newElInput.setAttribute('id', index)
-    newElInput.value = this.state.todos[index];
-    oldEl.childNodes[2].addEventListener('click', this.handleResubmit)
   }
 
 
   handleDelete(e) {
     const index = Number(e.target.id)
     this.setState((state) => ({
-      todos: state.todos.filter((todo, i) => i !== index),
+      todos: state.todo.filter((todo, i) => i !== index),
     }));
   }
 
@@ -48,7 +76,9 @@ class ClassInput extends Component {
   handleSubmit(e) {
     e.preventDefault();
     this.setState((state) => ({
-      todos: state.todos.concat(state.inputVal),
+     todo: state.todo.concat(state.inputVal),
+     isEdited: state.isEdited.concat(true),
+     buttonType: state.buttonType.concat('Edit'),
       inputVal: '',
     }));
   }
@@ -59,7 +89,7 @@ class ClassInput extends Component {
     const oldEl = document.getElementById(e.target.id);
 
   
-    const newTodos = this.state.todos.map((t, i)  => {
+    const newTodos = this.state.todo.map((t, i)  => {
       if(i === index) {
         return t = oldEl.childNodes[3].value;
       } else {
@@ -67,7 +97,7 @@ class ClassInput extends Component {
       }
     })
     this.setState((state) => ({
-      todos:  state.todos = newTodos,
+      todo:  state.todo = newTodos,
       inputVal: '',
     }));
   
@@ -95,14 +125,16 @@ class ClassInput extends Component {
         {/* The list of all the To-Do's, displayed */}
        
           <ul>
-            {this.state.todos.map((todo,index) => (
-              <li id={index}  key={todo}>{todo}
-              <button id={index} onClick={this.handleDelete} type="delete">Delete</button>
-              <button id={index} onClick={this.handleEdit} type="edit">Edit</button>
-              </li>
+            {this.state.todo.map((todo,index) => (
+              <div key={index}>
+                <Todo id={index}  key={todo} name={todo} value={todo} isEdited={this.state.isEdited[index]}/>
+                <button id={index} onClick={this.handleDelete} type="delete">Delete</button>
+                <button id={index} onClick={this.state.clickHandler[index]} type="edit">{this.state.buttonType[index]}</button>
+                
+              </div>
             ))}
           </ul>
-          <Count value={this.state.todos.length}>{this.state.todos.length}</Count>
+          <Count value={this.state.todo.length}>{this.state.todo.length}</Count>
 
       </section>
     );
